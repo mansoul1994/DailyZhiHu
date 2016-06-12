@@ -31,8 +31,7 @@ public class MainNewsScrollView extends ScrollView {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
-        int action = e.getAction();
-        switch (action) {
+        switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 downY = (int) e.getRawY();
                 break;
@@ -53,7 +52,7 @@ public class MainNewsScrollView extends ScrollView {
         }
     }
 
-    public void setScrollBottomListener(ScrollBottomListener scrollBottomListener) {
+    public void setOnScrollBottomListener(ScrollBottomListener scrollBottomListener) {
         this.scrollBottomListener = scrollBottomListener;
     }
 

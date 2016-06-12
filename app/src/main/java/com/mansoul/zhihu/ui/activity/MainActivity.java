@@ -1,7 +1,6 @@
 package com.mansoul.zhihu.ui.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -17,7 +16,6 @@ import android.widget.FrameLayout;
 import com.mansoul.zhihu.R;
 import com.mansoul.zhihu.ui.fragment.LeftMenuFragment;
 import com.mansoul.zhihu.ui.fragment.MainNewsFragment;
-import com.mansoul.zhihu.ui.fragment.OtherNewsFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
     public Toolbar mToolbar;
     public DrawerLayout mDrawer;
-    public Fragment fg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,15 +100,12 @@ public class MainActivity extends AppCompatActivity {
 
     public interface FragmentBackListener {
 
-        void  onbackForward();
+        void onBackForward();
     }
 
-    public FragmentBackListener getBackListener() {
-        return backListener;
-    }
 
-    public void setBackListener(FragmentBackListener backListener) {
-        this.backListener = backListener;
+    public void setOnBackListener(FragmentBackListener mBackListener) {
+        this.mBackListener = mBackListener;
     }
 
     public boolean isInterception() {
@@ -122,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         this.isInterception = isInterception;
     }
 
-    private FragmentBackListener backListener;
+    private FragmentBackListener mBackListener;
     private boolean isInterception = false;
 
     @Override
@@ -130,8 +124,8 @@ public class MainActivity extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
             if (isInterception()) {
-                if (backListener != null) {
-                    backListener.onbackForward();
+                if (mBackListener != null) {
+                    mBackListener.onBackForward();
                     return false;
                 }
             }

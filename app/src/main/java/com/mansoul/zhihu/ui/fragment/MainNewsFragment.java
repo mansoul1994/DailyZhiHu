@@ -7,7 +7,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -100,7 +99,7 @@ public class MainNewsFragment extends BaseFragment {
             }
         });
 
-        mScrollView.setScrollBottomListener(new MainNewsScrollView.ScrollBottomListener() {
+        mScrollView.setOnScrollBottomListener(new MainNewsScrollView.ScrollBottomListener() {
             @Override
             public void scrollBottom() {
                 if (!isLoadMore) {

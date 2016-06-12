@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,7 +27,6 @@ import com.mansoul.zhihu.ui.activity.NewsContentActivity;
 import com.mansoul.zhihu.ui.adapter.OtherNewsAdapter;
 import com.mansoul.zhihu.utils.PrefUtils;
 
-import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
@@ -172,7 +170,7 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
         // TODO Auto-generated method stub
         super.onAttach(activity);
         if(activity instanceof MainActivity){
-            ((MainActivity)activity).setBackListener(this);
+            ((MainActivity)activity).setOnBackListener(this);
             ((MainActivity)activity).setInterception(true);
         }
     }
@@ -181,13 +179,13 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
     public void onDetach() {
         super.onDetach();
         if(getActivity() instanceof MainActivity){
-            ((MainActivity)getActivity()).setBackListener(null);
+            ((MainActivity)getActivity()).setOnBackListener(null);
             ((MainActivity)getActivity()).setInterception(false);
         }
     }
 
     @Override
-    public void onbackForward() {
+    public void onBackForward() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction(); //开启事务
         transaction.replace(R.id.fl_main, new MainNewsFragment());
