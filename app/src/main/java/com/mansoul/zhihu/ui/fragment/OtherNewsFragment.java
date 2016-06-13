@@ -19,14 +19,18 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.mansoul.zhihu.R;
+import com.mansoul.zhihu.cache.HttpCacheManager;
 import com.mansoul.zhihu.domain.NewsTheme;
 import com.mansoul.zhihu.global.MyApplication;
 import com.mansoul.zhihu.global.NewsApi.Api;
 import com.mansoul.zhihu.ui.activity.MainActivity;
 import com.mansoul.zhihu.ui.activity.NewsContentActivity;
 import com.mansoul.zhihu.ui.adapter.OtherNewsAdapter;
+import com.mansoul.zhihu.utils.HttpUtils;
 import com.mansoul.zhihu.utils.PrefUtils;
+import com.mansoul.zhihu.utils.StringUtils;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
@@ -35,7 +39,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Mansoul on 16/6/7.
  */
-public class OtherNewsFragment extends BaseFragment implements MainActivity.FragmentBackListener{
+public class OtherNewsFragment extends BaseFragment implements MainActivity.FragmentBackListener {
 
     private static String URL = null;
     private String title;
@@ -67,14 +71,18 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
         mRecyclerView.setFocusable(true);
 
 
-
         return view;
     }
 
     @Override
     public void initData() {
+        if (HttpUtils.isNetworkAvailable(mActivity)) {
 
-        getDataFormServer();
+            getDataFormServer();
+
+        } else {
+            getCache(URL);
+        }
         mSwipeRefresh.setColorSchemeColors(
                 getResources().getColor(R.color.colorPrimary),
                 getResources().getColor(R.color.colorAccent),
@@ -83,9 +91,24 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getDataFormServer();
+                if (HttpUtils.isNetworkAvailable(mActivity)) {
+                    getDataFormServer();
+                }
+                mSwipeRefresh.setRefreshing(false);
             }
         });
+
+    }
+
+    public void getCache(String lastNews) {
+        mSwipeRefresh.setRefreshing(false);
+        System.out.println("加载缓存了！！！");
+        String cache = HttpCacheManager.getCache(lastNews);
+
+        if (!StringUtils.isEmpty(cache)) {
+            parseData(cache);
+        }
+
     }
 
     private boolean isLoading = false;
@@ -100,6 +123,18 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
                         @Override
                         public void onResponse(String response) {
                             System.out.println(response);
+
+                            //写缓存
+                            File cacheFile = HttpCacheManager.getCacheFile(URL); //缓存文件
+                            if (cacheFile == null) {
+                                HttpCacheManager.setCache(mActivity, URL, response);
+                            } else {
+                                String cache = HttpCacheManager.getCache(URL);
+                                if (cache != null && !cache.equals(response)) {
+                                    cacheFile.delete();
+                                    HttpCacheManager.setCache(mActivity, URL, response);
+                                }
+                            }
 
                             //解析json数据
                             parseData(response);
@@ -164,23 +199,22 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
     }
 
 
-
     @Override
     public void onAttach(Activity activity) {
         // TODO Auto-generated method stub
         super.onAttach(activity);
-        if(activity instanceof MainActivity){
-            ((MainActivity)activity).setOnBackListener(this);
-            ((MainActivity)activity).setInterception(true);
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).setOnBackListener(this);
+            ((MainActivity) activity).setInterception(true);
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        if(getActivity() instanceof MainActivity){
-            ((MainActivity)getActivity()).setOnBackListener(null);
-            ((MainActivity)getActivity()).setInterception(false);
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setOnBackListener(null);
+            ((MainActivity) getActivity()).setInterception(false);
         }
     }
 

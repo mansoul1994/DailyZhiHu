@@ -20,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.mansoul.zhihu.R;
+import com.mansoul.zhihu.cache.HttpCacheManager;
 import com.mansoul.zhihu.domain.NewsLast;
 import com.mansoul.zhihu.global.MyApplication;
 import com.mansoul.zhihu.global.NewsApi.Api;
@@ -28,10 +29,13 @@ import com.mansoul.zhihu.ui.activity.NewsContentActivity;
 import com.mansoul.zhihu.ui.adapter.MainNewsAdapter;
 import com.mansoul.zhihu.ui.adapter.TopNewsPagerAdapter;
 import com.mansoul.zhihu.ui.view.MainNewsScrollView;
+import com.mansoul.zhihu.utils.HttpUtils;
 import com.mansoul.zhihu.utils.LogUtils;
 import com.mansoul.zhihu.utils.PrefUtils;
+import com.mansoul.zhihu.utils.StringUtils;
 import com.mansoul.zhihu.utils.ToastUtil;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
@@ -85,7 +89,13 @@ public class MainNewsFragment extends BaseFragment {
 
     @Override
     public void initData() {
-        getDataFormServer(LAST_NEWS);
+
+        if (HttpUtils.isNetworkAvailable(mActivity)) {
+            getDataFormServer(LAST_NEWS);
+        } else {
+            getCache(LAST_NEWS);
+        }
+
 
         mSwipeRefresh.setColorSchemeColors(
                 getResources().getColor(R.color.colorPrimary),
@@ -95,7 +105,10 @@ public class MainNewsFragment extends BaseFragment {
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getDataFormServer(LAST_NEWS);
+                if (HttpUtils.isNetworkAvailable(mActivity)) {
+                    getDataFormServer(LAST_NEWS);
+                }
+                mSwipeRefresh.setRefreshing(false);
             }
         });
 
@@ -115,14 +128,32 @@ public class MainNewsFragment extends BaseFragment {
     private void loadMore() {
         isLoadMore = true;
         String url = Api.BASEURL + Api.BEFORE + data;
-        getMoreData(url);
+
+        if (HttpUtils.isNetworkAvailable(mActivity)) {
+
+            getMoreData(url);
+        } else {
+            getMoreCache(url);
+        }
     }
 
-    private void getMoreData(String url) {
+    private void getMoreData(final String url) {
         StringRequest request = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        //写缓存
+                        File cacheFile = HttpCacheManager.getCacheFile(url); //缓存文件
+                        if (cacheFile == null) {
+                            HttpCacheManager.setCache(mActivity, url, response);
+                        } else {
+                            String cache = HttpCacheManager.getCache(url);
+                            if (cache != null && !cache.equals(response)) {
+                                cacheFile.delete();
+                                HttpCacheManager.setCache(mActivity, url, response);
+                            }
+                        }
+
                         parseMoreData(response);
                         isLoadMore = false;
                     }
@@ -150,7 +181,7 @@ public class MainNewsFragment extends BaseFragment {
 
     private boolean isLoading = false;
 
-    public void getDataFormServer(String url) {
+    public void getDataFormServer(final String url) {
 
         if (!isLoading) {
             isLoading = true;
@@ -161,6 +192,18 @@ public class MainNewsFragment extends BaseFragment {
                         @Override
                         public void onResponse(String response) {
                             System.out.println(response);
+
+                            //写缓存
+                            File cacheFile = HttpCacheManager.getCacheFile(url); //缓存文件
+                            if (cacheFile == null) {
+                                HttpCacheManager.setCache(mActivity, url, response);
+                            } else {
+                                String cache = HttpCacheManager.getCache(url);
+                                if (cache != null && !cache.equals(response)) {
+                                    cacheFile.delete();
+                                    HttpCacheManager.setCache(mActivity, url, response);
+                                }
+                            }
 
                             //解析json数据
                             parseData(response);
@@ -332,6 +375,28 @@ public class MainNewsFragment extends BaseFragment {
                 handler.postDelayed(this, 7000);
             }
         }
+    }
+
+    public void getCache(String lastNews) {
+        mSwipeRefresh.setRefreshing(false);
+        System.out.println("加载缓存了！！！");
+        String cache = HttpCacheManager.getCache(lastNews);
+
+        if (!StringUtils.isEmpty(cache)) {
+            parseData(cache);
+        }
+    }
+
+    public void getMoreCache(String lastNews) {
+        mSwipeRefresh.setRefreshing(false);
+        System.out.println("加载缓存了！！！");
+        String cache = HttpCacheManager.getCache(lastNews);
+        isLoadMore = false;
+
+        if (!StringUtils.isEmpty(cache)) {
+            parseMoreData(cache);
+        }
+
     }
 
     @Override

@@ -20,10 +20,10 @@ import butterknife.ButterKnife;
  */
 public class NewsItemAdapter extends BaseAdapter {
 
-    private List<NewsItem> mItem;
+    private List<NewsItem.OthersBean> mItem;
     private Context mContext;
 
-    public NewsItemAdapter(List<NewsItem> mItem, Context mContext) {
+    public NewsItemAdapter(List<NewsItem.OthersBean> mItem, Context mContext) {
         this.mItem = mItem;
         this.mContext = mContext;
     }

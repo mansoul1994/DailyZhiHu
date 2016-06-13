@@ -19,4 +19,4 @@ public class Api {
     public static final int LATEST_COLUMN = Integer.MAX_VALUE;
     public static final int BASE_COLUMN = 100000000;
 }
-//http://news-at.zhihu.com/api/4/start-image/1080*1776
+//http://news-at.zhihu.com/api/4/themes

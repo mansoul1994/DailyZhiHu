@@ -11,17 +11,22 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
 import com.mansoul.zhihu.R;
+import com.mansoul.zhihu.cache.HttpCacheManager;
 import com.mansoul.zhihu.domain.NewsItem;
 import com.mansoul.zhihu.global.MyApplication;
 import com.mansoul.zhihu.global.NewsApi.Api;
 import com.mansoul.zhihu.ui.adapter.NewsItemAdapter;
 import com.mansoul.zhihu.utils.HttpUtils;
+import com.mansoul.zhihu.utils.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,9 +44,12 @@ public class LeftMenuFragment extends BaseFragment {
     @BindView(R.id.lv_item)
     ListView lv_item;
 
+    private OtherNewsFragment otherNewsFragment;
+    private MainNewsFragment mainNewsFragment;
+
     private static final String NEWS_ITEM_URL = Api.BASEURL + Api.THEMES;
 
-    private List<NewsItem> newsItemList;
+    private List<NewsItem.OthersBean> newsItemList;
     private NewsItemAdapter mAdapter;
 
     @Override
@@ -63,18 +71,31 @@ public class LeftMenuFragment extends BaseFragment {
             setData();
 
         } else {
-
+            getCache(NEWS_ITEM_URL);
         }
 
 
     }
 
     public void setData() {
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, NEWS_ITEM_URL,
-                new Response.Listener<JSONObject>() {
+        StringRequest request = new StringRequest(Request.Method.GET, NEWS_ITEM_URL,
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        parseJson(response);
+                    public void onResponse(String response) {
+                        //写缓存
+                        File cacheFile = HttpCacheManager.getCacheFile(NEWS_ITEM_URL); //缓存文件
+                        if (cacheFile == null) {
+                            HttpCacheManager.setCache(mActivity, NEWS_ITEM_URL, response);
+                        } else {
+                            String cache = HttpCacheManager.getCache(NEWS_ITEM_URL);
+                            if (cache != null && !cache.equals(response)) {
+                                cacheFile.delete();
+                                HttpCacheManager.setCache(mActivity, NEWS_ITEM_URL, response);
+                            }
+                        }
+
+                        parseString(response);
+
                     }
                 },
                 new Response.ErrorListener() {
@@ -87,24 +108,14 @@ public class LeftMenuFragment extends BaseFragment {
         MyApplication.getRequestQueue().add(request);
     }
 
-    private void parseJson(JSONObject response) {
+    private void parseString(String response) {
+        Gson gson = new Gson();
+        NewsItem newsItem = gson.fromJson(response, NewsItem.class);
+        newsItemList = newsItem.getOthers();
 
-        try {
-            JSONArray ja = response.getJSONArray("others");
-            for (int i = 0; i < ja.length(); i++) {
-                NewsItem newsItem = new NewsItem();
-                JSONObject jo = ja.getJSONObject(i);
-                newsItem.setId(jo.getString("id"));
-                newsItem.setName(jo.getString("name"));
-                newsItemList.add(newsItem);
-            }
-
-            initListView();
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        initListView();
     }
+
 
     private void initListView() {
         mAdapter = new NewsItemAdapter(newsItemList, mActivity);
@@ -117,7 +128,7 @@ public class LeftMenuFragment extends BaseFragment {
                 lv_item.setSelector(R.color.selector);
                 tv_main.setBackgroundResource(android.R.color.white);
 
-                openNewsFragment(newsItemList.get(position).getId(), newsItemList.get(position).getName());
+                openNewsFragment(newsItemList.get(position).getId() + "", newsItemList.get(position).getName());
             }
         });
 
@@ -130,9 +141,13 @@ public class LeftMenuFragment extends BaseFragment {
 
                 mAdapter.notifyDataSetChanged();
 
+                if (mainNewsFragment == null) {
+                    mainNewsFragment = new MainNewsFragment();
+                }
+
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction(); //开启事务
-                transaction.replace(R.id.fl_main, new MainNewsFragment());
+                transaction.replace(R.id.fl_main, mainNewsFragment);
                 transaction.commit();
             }
         });
@@ -144,6 +159,15 @@ public class LeftMenuFragment extends BaseFragment {
         FragmentTransaction transaction = fm.beginTransaction(); //开启事务
         transaction.replace(R.id.fl_main, new OtherNewsFragment(id, title));
         transaction.commit();
+    }
+
+    public void getCache(String lastNews) {
+        System.out.println("加载缓存了！！！");
+        String cache = HttpCacheManager.getCache(lastNews);
+
+        if (!StringUtils.isEmpty(cache)) {
+            parseString(cache);
+        }
     }
 
     @Override

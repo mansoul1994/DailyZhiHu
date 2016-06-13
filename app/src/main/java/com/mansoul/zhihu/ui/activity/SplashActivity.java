@@ -13,7 +13,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
 import com.mansoul.zhihu.R;
+import com.mansoul.zhihu.cache.HttpCacheManager;
 import com.mansoul.zhihu.global.MyApplication;
 import com.mansoul.zhihu.global.NewsApi.Api;
 import com.mansoul.zhihu.utils.HttpUtils;
@@ -102,12 +104,11 @@ public class SplashActivity extends AppCompatActivity {
         } else {
             //加载缓存
             ToastUtil.getInstance().showToast("你当前的网络不可用");
-
             mImageView.setImageResource(R.drawable.start);
         }
     }
 
-    public void getDataFormServer(String url) {
+    public void getDataFormServer(final String url) {
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
@@ -118,6 +119,8 @@ public class SplashActivity extends AppCompatActivity {
                             String text = response.getString("text");
 
                             setImage(imgUrl, text);
+
+//                            HttpCacheManager.setCache(url, response.toString());
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -130,6 +133,7 @@ public class SplashActivity extends AppCompatActivity {
 
                     }
                 });
+        request.setShouldCache(true);
         request.setTag("getImgUrl");
         MyApplication.getRequestQueue().add(request);
     }
@@ -149,6 +153,11 @@ public class SplashActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         MyApplication.getRequestQueue().cancelAll("getImgUrl");
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }
 

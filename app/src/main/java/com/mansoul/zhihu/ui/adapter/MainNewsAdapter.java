@@ -73,11 +73,20 @@ public class MainNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             normalHolder.title.setTextColor(Color.BLACK);
         }
 
+        ImageView img = normalHolder.imageView;
+
         String imgUrl = mStories.get(position).getImages().get(0);
 
-        //设置图片
-        HttpUtils.setImage(imgUrl, normalHolder.imageView);
+        String tag = (String) img.getTag();
+
+        if (!imgUrl.equals(tag)) {
+
+            img.setTag(imgUrl);
+
+            //设置图片
+            HttpUtils.setImage(imgUrl, normalHolder.imageView);
 //        setImg(imgUrl, normalHolder.imageView);
+        }
 
 
     }

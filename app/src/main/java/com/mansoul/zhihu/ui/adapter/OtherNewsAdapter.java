@@ -27,26 +27,30 @@ import butterknife.ButterKnife;
 public class OtherNewsAdapter extends RecyclerView.Adapter<OtherNewsAdapter.NormalViewHolder> implements View.OnClickListener {
 
     private final Context mContext;
-    private LayoutInflater mLayoutInflater;
+    private LayoutInflater mLayoutInflater = null;
     private List<NewsTheme.StoriesBean> mStories;
 
     public OtherNewsAdapter(List<NewsTheme.StoriesBean> mStories, Context mContext) {
         this.mStories = mStories;
-        mLayoutInflater = LayoutInflater.from(mContext);
+        if (mContext != null) {
+            mLayoutInflater = LayoutInflater.from(mContext);
+        }
         this.mContext = mContext;
     }
 
     @Override
     public NormalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mLayoutInflater.inflate(R.layout.item_news_main, parent, false);
-        NormalViewHolder holder = new NormalViewHolder(view);
+        if (mLayoutInflater != null) {
 
-        //3.设置监听()
-        view.setOnClickListener(this);
+            View view = mLayoutInflater.inflate(R.layout.item_news_main, parent, false);
+            NormalViewHolder holder = new NormalViewHolder(view);
 
-        return holder;
+            //3.设置监听()
+            view.setOnClickListener(this);
 
-
+            return holder;
+        }
+        return null;
     }
 
     @Override
