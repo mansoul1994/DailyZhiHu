@@ -44,7 +44,6 @@ public class LeftMenuFragment extends BaseFragment {
     @BindView(R.id.lv_item)
     ListView lv_item;
 
-    private OtherNewsFragment otherNewsFragment;
     private MainNewsFragment mainNewsFragment;
 
     private static final String NEWS_ITEM_URL = Api.BASEURL + Api.THEMES;
@@ -65,57 +64,17 @@ public class LeftMenuFragment extends BaseFragment {
     public void initData() {
         newsItemList = new ArrayList<>();
 
-        boolean isNetworkAvailable = HttpUtils.isNetworkAvailable(mActivity);
-        if (isNetworkAvailable) {
-            //网络加载数据
-            setData();
-
-        } else {
-            getCache(NEWS_ITEM_URL);
-        }
-
-
     }
 
-    public void setData() {
-        StringRequest request = new StringRequest(Request.Method.GET, NEWS_ITEM_URL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        //写缓存
-                        File cacheFile = HttpCacheManager.getCacheFile(NEWS_ITEM_URL); //缓存文件
-                        if (cacheFile == null) {
-                            HttpCacheManager.setCache(mActivity, NEWS_ITEM_URL, response);
-                        } else {
-                            String cache = HttpCacheManager.getCache(NEWS_ITEM_URL);
-                            if (cache != null && !cache.equals(response)) {
-                                cacheFile.delete();
-                                HttpCacheManager.setCache(mActivity, NEWS_ITEM_URL, response);
-                            }
-                        }
 
-                        parseString(response);
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                });
-        request.setTag("newsItem");
-        MyApplication.getRequestQueue().add(request);
-    }
-
-    private void parseString(String response) {
+    @Override
+    public void parseData(String response) {
         Gson gson = new Gson();
         NewsItem newsItem = gson.fromJson(response, NewsItem.class);
         newsItemList = newsItem.getOthers();
 
         initListView();
     }
-
 
     private void initListView() {
         mAdapter = new NewsItemAdapter(newsItemList, mActivity);
@@ -161,18 +120,18 @@ public class LeftMenuFragment extends BaseFragment {
         transaction.commit();
     }
 
-    public void getCache(String lastNews) {
-        System.out.println("加载缓存了！！！");
-        String cache = HttpCacheManager.getCache(lastNews);
-
-        if (!StringUtils.isEmpty(cache)) {
-            parseString(cache);
-        }
+    @Override
+    public String getUrl() {
+        return NEWS_ITEM_URL;
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        MyApplication.getRequestQueue().cancelAll("newsItem");
+    public void setStateFalse() {
+
+    }
+
+    @Override
+    public void setStateTrue() {
+
     }
 }

@@ -67,7 +67,6 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
 
         ((MainActivity) mActivity).mToolbar.setTitle(title);
 
-//        ((MainActivity) mActivity).getSupportFragmentManager().popBackStack();
         mRecyclerView.setFocusable(true);
 
 
@@ -78,7 +77,7 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
     public void initData() {
         if (HttpUtils.isNetworkAvailable(mActivity)) {
 
-            getDataFormServer();
+            getDataFormServer(URL);
 
         } else {
             getCache(URL);
@@ -92,7 +91,7 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
             @Override
             public void onRefresh() {
                 if (HttpUtils.isNetworkAvailable(mActivity)) {
-                    getDataFormServer();
+                    getDataFormServer(URL);
                 }
                 mSwipeRefresh.setRefreshing(false);
             }
@@ -111,50 +110,12 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
 
     }
 
-    private boolean isLoading = false;
-
-    public void getDataFormServer() {
-
-        if (!isLoading) {
-            isLoading = true;
-            mSwipeRefresh.setRefreshing(true);
-            StringRequest request = new StringRequest(Request.Method.GET, URL,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            System.out.println(response);
-
-                            //写缓存
-                            File cacheFile = HttpCacheManager.getCacheFile(URL); //缓存文件
-                            if (cacheFile == null) {
-                                HttpCacheManager.setCache(mActivity, URL, response);
-                            } else {
-                                String cache = HttpCacheManager.getCache(URL);
-                                if (cache != null && !cache.equals(response)) {
-                                    cacheFile.delete();
-                                    HttpCacheManager.setCache(mActivity, URL, response);
-                                }
-                            }
-
-                            //解析json数据
-                            parseData(response);
-
-                            mSwipeRefresh.setRefreshing(false);
-                            isLoading = false;
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            error.printStackTrace();
-                        }
-                    });
-            request.setTag("lastNews");
-            MyApplication.getRequestQueue().add(request);
-        }
+    @Override
+    public String getUrl() {
+        return URL;
     }
 
-    private void parseData(String response) {
+    public void parseData(String response) {
         Gson gson = new Gson();
         NewsTheme newsTheme = gson.fromJson(response, NewsTheme.class);
 
@@ -187,6 +148,17 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
         });
 
 
+    }
+
+
+    @Override
+    public void setStateFalse() {
+        mSwipeRefresh.setRefreshing(false);
+    }
+
+    @Override
+    public void setStateTrue() {
+        mSwipeRefresh.setRefreshing(true);
     }
 
     private void initHeader(NewsTheme newsTheme) {

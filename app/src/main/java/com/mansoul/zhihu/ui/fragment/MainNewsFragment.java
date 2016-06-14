@@ -83,19 +83,11 @@ public class MainNewsFragment extends BaseFragment {
 
         handler = new Handler();
 
-
         return view;
     }
 
     @Override
     public void initData() {
-
-        if (HttpUtils.isNetworkAvailable(mActivity)) {
-            getDataFormServer(LAST_NEWS);
-        } else {
-            getCache(LAST_NEWS);
-        }
-
 
         mSwipeRefresh.setColorSchemeColors(
                 getResources().getColor(R.color.colorPrimary),
@@ -179,51 +171,8 @@ public class MainNewsFragment extends BaseFragment {
         data = newsLast.getDate();
     }
 
-    private boolean isLoading = false;
 
-    public void getDataFormServer(final String url) {
-
-        if (!isLoading) {
-            isLoading = true;
-            mSwipeRefresh.setRefreshing(true);
-
-            StringRequest request = new StringRequest(Request.Method.GET, url,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            System.out.println(response);
-
-                            //写缓存
-                            File cacheFile = HttpCacheManager.getCacheFile(url); //缓存文件
-                            if (cacheFile == null) {
-                                HttpCacheManager.setCache(mActivity, url, response);
-                            } else {
-                                String cache = HttpCacheManager.getCache(url);
-                                if (cache != null && !cache.equals(response)) {
-                                    cacheFile.delete();
-                                    HttpCacheManager.setCache(mActivity, url, response);
-                                }
-                            }
-
-                            //解析json数据
-                            parseData(response);
-
-                            mSwipeRefresh.setRefreshing(false);
-                            isLoading = false;
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            error.printStackTrace();
-                        }
-                    });
-            request.setTag("lastNews");
-            MyApplication.getRequestQueue().add(request);
-        }
-    }
-
-    private void parseData(String json) {
+    public void parseData(String json) {
         Gson gson = new Gson();
         NewsLast newsLast = gson.fromJson(json, NewsLast.class);
         mStories = newsLast.getStories();
@@ -259,8 +208,17 @@ public class MainNewsFragment extends BaseFragment {
             }
         });
 
-
         System.out.println(newsLast.getDate());
+    }
+
+    @Override
+    public void setStateFalse() {
+        mSwipeRefresh.setRefreshing(false);
+    }
+
+    @Override
+    public void setStateTrue() {
+        mSwipeRefresh.setRefreshing(true);
     }
 
     //轮播图控制
@@ -377,14 +335,10 @@ public class MainNewsFragment extends BaseFragment {
         }
     }
 
-    public void getCache(String lastNews) {
-        mSwipeRefresh.setRefreshing(false);
-        System.out.println("加载缓存了！！！");
-        String cache = HttpCacheManager.getCache(lastNews);
 
-        if (!StringUtils.isEmpty(cache)) {
-            parseData(cache);
-        }
+    @Override
+    public String getUrl() {
+        return LAST_NEWS;
     }
 
     public void getMoreCache(String lastNews) {
@@ -396,15 +350,12 @@ public class MainNewsFragment extends BaseFragment {
         if (!StringUtils.isEmpty(cache)) {
             parseMoreData(cache);
         }
-
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mActivity = null;
         handler = null;
-        MyApplication.getRequestQueue().cancelAll("lastNews");
         MyApplication.getRequestQueue().cancelAll("beforeNews");
     }
 
@@ -412,4 +363,5 @@ public class MainNewsFragment extends BaseFragment {
         float density = getResources().getDisplayMetrics().density; //获取手机密度
         return (int) (dip * density + 0.5f);
     }
+
 }
