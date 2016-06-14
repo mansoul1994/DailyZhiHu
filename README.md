@@ -18,6 +18,7 @@ Android 4.0+ support
 
 ## 开源库
 * [Volley](https://github.com/mcxiaoke/android-volley)
+* [Butter Knife](https://github.com/JakeWharton/butterknife)
 * [Universal-Image-Loader](https://github.com/nostra13/Android-Universal-Image-Loader)
 * SwipeRefreshLayout
 
