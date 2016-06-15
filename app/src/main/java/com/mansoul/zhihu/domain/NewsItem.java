@@ -3,6 +3,7 @@ package com.mansoul.zhihu.domain;
 import java.util.List;
 
 /**
+ * 侧边栏菜单条目
  * Created by Mansoul on 16/6/6.
  */
 public class NewsItem {

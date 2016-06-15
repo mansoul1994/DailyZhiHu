@@ -84,7 +84,7 @@ public class HttpCacheManager {
 //                    }
 //                    return sb.toString();
 //                }
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) {
                     sb.append(line);
@@ -116,7 +116,6 @@ public class HttpCacheManager {
         if (cacheFile.exists()) {
             return cacheFile;
         }
-
         return null;
     }
 }

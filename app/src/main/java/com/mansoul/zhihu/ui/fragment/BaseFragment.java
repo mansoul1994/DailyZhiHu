@@ -27,7 +27,6 @@ import java.io.File;
 public abstract class BaseFragment extends Fragment {
 
     public Activity mActivity;
-    private String url;
     private String tag;
 
     //fragment创建

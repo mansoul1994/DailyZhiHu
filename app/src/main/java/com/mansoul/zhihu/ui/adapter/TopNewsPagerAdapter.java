@@ -49,6 +49,14 @@ public class TopNewsPagerAdapter extends PagerAdapter {
         ImageView view = new ImageView(mActivity);
         view.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
+        String tag = (String) view.getTag();
+
+        if (!imgUrl.equals(tag)) {
+            view.setTag(imgUrl);
+            //设置图片
+            HttpUtils.setImage(imgUrl, view);
+        }
+
         final int finalPosition = position;
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,14 +73,6 @@ public class TopNewsPagerAdapter extends PagerAdapter {
                 mActivity.startActivity(intent);
             }
         });
-
-//        ImageLoader imageLoader = MyApplication.getImageLoader();
-//        ImageLoader.ImageListener listener = ImageLoader.getImageListener(
-//                view, R.mipmap.moren, R.mipmap.moren);
-//        imageLoader.get(imgUrl, listener);
-
-        //显示图片
-        HttpUtils.setImage(imgUrl, view);
 
         container.addView(view);
         return view;

@@ -34,6 +34,7 @@ import com.mansoul.zhihu.utils.LogUtils;
 import com.mansoul.zhihu.utils.PrefUtils;
 import com.mansoul.zhihu.utils.StringUtils;
 import com.mansoul.zhihu.utils.ToastUtil;
+import com.mansoul.zhihu.utils.UIUtils;
 
 import java.io.File;
 import java.util.List;
@@ -243,7 +244,7 @@ public class MainNewsFragment extends BaseFragment {
             } else {
                 imageView.setImageResource(R.drawable.indicator_normal);
 
-                params.leftMargin = dip2px(3);
+                params.leftMargin = UIUtils.dip2px(3);
             }
 
             imageView.setLayoutParams(params);
@@ -274,7 +275,6 @@ public class MainNewsFragment extends BaseFragment {
         task.start();
 
         initViewPager(top_stories);
-
     }
 
     private int prePosition;
@@ -312,7 +312,6 @@ public class MainNewsFragment extends BaseFragment {
         });
     }
 
-
     //轮播任务
     class Task implements Runnable {
         public void start() {
@@ -320,7 +319,6 @@ public class MainNewsFragment extends BaseFragment {
             handler.removeCallbacksAndMessages(null);
             handler.postDelayed(this, 7000);
         }
-
 
         @Override
         public void run() {
@@ -334,7 +332,6 @@ public class MainNewsFragment extends BaseFragment {
             }
         }
     }
-
 
     @Override
     public String getUrl() {
@@ -358,10 +355,4 @@ public class MainNewsFragment extends BaseFragment {
         handler = null;
         MyApplication.getRequestQueue().cancelAll("beforeNews");
     }
-
-    public int dip2px(float dip) {
-        float density = getResources().getDisplayMetrics().density; //获取手机密度
-        return (int) (dip * density + 0.5f);
-    }
-
 }

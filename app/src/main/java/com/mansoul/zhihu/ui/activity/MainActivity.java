@@ -16,9 +16,11 @@ import android.widget.FrameLayout;
 import com.mansoul.zhihu.R;
 import com.mansoul.zhihu.ui.fragment.LeftMenuFragment;
 import com.mansoul.zhihu.ui.fragment.MainNewsFragment;
+import com.mansoul.zhihu.utils.LogUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
 
     public Toolbar mToolbar;
     public DrawerLayout mDrawer;
+
+    private MainNewsFragment mainNewsFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +54,20 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction(); //开启事务
         transaction.replace(R.id.fl_menu, new LeftMenuFragment(), FRAGMENT_TAG_MENU); //用fragment替换布局
-        transaction.replace(R.id.fl_main, new MainNewsFragment(), FRAGMENT_TAG_MAIN);
+        transaction.replace(R.id.fl_main, openMainNewsFragment(), FRAGMENT_TAG_MAIN);
         transaction.commit();
+    }
+
+    public MainNewsFragment openMainNewsFragment() {
+        if (mainNewsFragment == null) {
+            LogUtils.i("新建了MainNewsFragment");
+            mainNewsFragment = new MainNewsFragment();
+        }
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.fl_main, mainNewsFragment);
+        transaction.commit();
+        return mainNewsFragment;
     }
 
     private void initView() {

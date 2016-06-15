@@ -192,10 +192,7 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
 
     @Override
     public void onBackForward() {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction transaction = fm.beginTransaction(); //开启事务
-        transaction.replace(R.id.fl_main, new MainNewsFragment());
-        transaction.commit();
+        ((MainActivity) mActivity).openMainNewsFragment();
     }
 
 }

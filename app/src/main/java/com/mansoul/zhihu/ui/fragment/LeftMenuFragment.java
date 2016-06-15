@@ -4,34 +4,23 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.mansoul.zhihu.R;
-import com.mansoul.zhihu.cache.HttpCacheManager;
 import com.mansoul.zhihu.domain.NewsItem;
-import com.mansoul.zhihu.global.MyApplication;
 import com.mansoul.zhihu.global.NewsApi.Api;
+import com.mansoul.zhihu.ui.activity.MainActivity;
 import com.mansoul.zhihu.ui.adapter.NewsItemAdapter;
-import com.mansoul.zhihu.utils.HttpUtils;
-import com.mansoul.zhihu.utils.StringUtils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * 侧边栏
@@ -43,11 +32,12 @@ public class LeftMenuFragment extends BaseFragment {
     TextView tv_main;
     @BindView(R.id.lv_item)
     ListView lv_item;
+    @BindView(R.id.ll_favorite)
+    LinearLayout llFavorite;
+    @BindView(R.id.ll_download)
+    LinearLayout llDownload;
 
-    private MainNewsFragment mainNewsFragment;
-
-    private static final String NEWS_ITEM_URL = Api.BASEURL + Api.THEMES;
-
+    private static final String NEWS_ITEM_URL = Api.BASEURL + Api.THEMES; //侧边栏菜单条目
     private List<NewsItem.OthersBean> newsItemList;
     private NewsItemAdapter mAdapter;
 
@@ -56,16 +46,13 @@ public class LeftMenuFragment extends BaseFragment {
         View view = View.inflate(mActivity, R.layout.fragment_left_menu, null);
         ButterKnife.bind(this, view);
 
-
         return view;
     }
 
     @Override
     public void initData() {
         newsItemList = new ArrayList<>();
-
     }
-
 
     @Override
     public void parseData(String response) {
@@ -86,36 +73,37 @@ public class LeftMenuFragment extends BaseFragment {
                 mActivity.onBackPressed();
                 lv_item.setSelector(R.color.selector);
                 tv_main.setBackgroundResource(android.R.color.white);
-
-                openNewsFragment(newsItemList.get(position).getId() + "", newsItemList.get(position).getName());
+                openOtherNewsFragment(newsItemList.get(position).getId() + "",
+                        newsItemList.get(position).getName());
             }
         });
+    }
 
-        tv_main.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mActivity.onBackPressed();
-                lv_item.setSelector(android.R.color.white);
-                tv_main.setBackgroundResource(R.color.selector);
+    //打开首页
+    @OnClick(R.id.tv_main)
+    public void mainFragment() {
+        mActivity.onBackPressed();
+        lv_item.setSelector(android.R.color.white);
+        tv_main.setBackgroundResource(R.color.selector);
+        mAdapter.notifyDataSetChanged();
+        ((MainActivity) mActivity).openMainNewsFragment();
+    }
 
-                mAdapter.notifyDataSetChanged();
-
-                if (mainNewsFragment == null) {
-                    mainNewsFragment = new MainNewsFragment();
-                }
-
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction transaction = fm.beginTransaction(); //开启事务
-                transaction.replace(R.id.fl_main, mainNewsFragment);
-                transaction.commit();
-            }
-        });
+    //打开收藏
+    @OnClick(R.id.ll_favorite)
+    public void openFav() {
 
     }
 
-    private void openNewsFragment(String title, String id) {
+    //打开下载
+    @OnClick(R.id.ll_download)
+    public void openDownload() {
+
+    }
+
+    private void openOtherNewsFragment(String title, String id) {
         FragmentManager fm = getFragmentManager();
-        FragmentTransaction transaction = fm.beginTransaction(); //开启事务
+        FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.fl_main, new OtherNewsFragment(id, title));
         transaction.commit();
     }

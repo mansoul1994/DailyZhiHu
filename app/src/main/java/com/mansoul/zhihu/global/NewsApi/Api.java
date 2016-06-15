@@ -1,6 +1,7 @@
 package com.mansoul.zhihu.global.NewsApi;
 
 /**
+ * 知乎日报API
  * Created by Mansoul on 16/6/5.
  */
 public class Api {
@@ -13,10 +14,10 @@ public class Api {
     public static final String BEFORE = "news/before/";
     public static final String THEMENEWS = "theme/";
     public static final String CONTENT = "news/";
-    public static final int TOPIC = 131;
-    public static final String START_LOCATION = "start_location";
-    public static final String CACHE = "cache";
-    public static final int LATEST_COLUMN = Integer.MAX_VALUE;
-    public static final int BASE_COLUMN = 100000000;
+//    public static final int TOPIC = 131;
+//    public static final String START_LOCATION = "start_location";
+//    public static final String CACHE = "cache";
+//    public static final int LATEST_COLUMN = Integer.MAX_VALUE;
+//    public static final int BASE_COLUMN = 100000000;
 }
 //http://news-at.zhihu.com/api/4/themes

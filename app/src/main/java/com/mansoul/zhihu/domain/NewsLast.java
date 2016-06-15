@@ -3,6 +3,7 @@ package com.mansoul.zhihu.domain;
 import java.util.List;
 
 /**
+ * 最新文章
  * Created by Mansoul on 16/6/6.
  */
 public class NewsLast {
