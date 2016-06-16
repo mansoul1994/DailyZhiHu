@@ -14,6 +14,7 @@ import com.mansoul.zhihu.domain.NewsItem;
 import com.mansoul.zhihu.global.NewsApi.Api;
 import com.mansoul.zhihu.ui.activity.MainActivity;
 import com.mansoul.zhihu.ui.adapter.NewsItemAdapter;
+import com.mansoul.zhihu.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,8 @@ public class LeftMenuFragment extends BaseFragment {
     private static final String NEWS_ITEM_URL = Api.BASEURL + Api.THEMES; //侧边栏菜单条目
     private List<NewsItem.OthersBean> newsItemList;
     private NewsItemAdapter mAdapter;
+    private FavoriteFragment favoriteFragment;
+    private FragmentManager mFm;
 
     @Override
     public View initView() {
@@ -51,20 +54,26 @@ public class LeftMenuFragment extends BaseFragment {
 
     @Override
     public void initData() {
+        if (mFm == null) {
+            mFm = getFragmentManager();
+        }
         newsItemList = new ArrayList<>();
     }
 
     @Override
     public void parseData(String response) {
-        Gson gson = new Gson();
-        NewsItem newsItem = gson.fromJson(response, NewsItem.class);
-        newsItemList = newsItem.getOthers();
+        if (response != null) {
+            Gson gson = new Gson();
+            NewsItem newsItem = gson.fromJson(response, NewsItem.class);
+            newsItemList = newsItem.getOthers();
 
-        initListView();
+            initListView(newsItemList);
+        }
     }
 
-    private void initListView() {
-        mAdapter = new NewsItemAdapter(newsItemList, mActivity);
+    private void initListView(final List<NewsItem.OthersBean> item) {
+
+        mAdapter = new NewsItemAdapter(item, mActivity);
         lv_item.setAdapter(mAdapter);
 
         lv_item.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -73,8 +82,11 @@ public class LeftMenuFragment extends BaseFragment {
                 mActivity.onBackPressed();
                 lv_item.setSelector(R.color.selector);
                 tv_main.setBackgroundResource(android.R.color.white);
-                openOtherNewsFragment(newsItemList.get(position).getId() + "",
-                        newsItemList.get(position).getName());
+
+                String newId = item.get(position).getId() + "";
+                String title = item.get(position).getName();
+
+                openOtherNewsFragment(newId, title);
             }
         });
     }
@@ -92,7 +104,13 @@ public class LeftMenuFragment extends BaseFragment {
     //打开收藏
     @OnClick(R.id.ll_favorite)
     public void openFav() {
-
+        mActivity.onBackPressed();
+        if (favoriteFragment == null) {
+            favoriteFragment = new FavoriteFragment();
+        }
+        FragmentTransaction transaction = mFm.beginTransaction();
+        transaction.replace(R.id.fl_main, favoriteFragment);
+        transaction.commit();
     }
 
     //打开下载
@@ -102,8 +120,7 @@ public class LeftMenuFragment extends BaseFragment {
     }
 
     private void openOtherNewsFragment(String title, String id) {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction transaction = fm.beginTransaction();
+        FragmentTransaction transaction = mFm.beginTransaction();
         transaction.replace(R.id.fl_main, new OtherNewsFragment(id, title));
         transaction.commit();
     }

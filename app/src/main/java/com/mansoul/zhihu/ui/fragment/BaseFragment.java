@@ -15,8 +15,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.mansoul.zhihu.cache.HttpCacheManager;
 import com.mansoul.zhihu.global.MyApplication;
 import com.mansoul.zhihu.utils.HttpUtils;
+import com.mansoul.zhihu.utils.LogUtils;
 import com.mansoul.zhihu.utils.MD5Encoder;
 import com.mansoul.zhihu.utils.StringUtils;
+import com.orhanobut.logger.Logger;
 
 import java.io.File;
 
@@ -51,12 +53,13 @@ public abstract class BaseFragment extends Fragment {
         //初始化数据
 
         String url = getUrl();
-        if (HttpUtils.isNetworkAvailable(mActivity)) {
-            getDataFormServer(url);
-        } else {
-            getCache(url);
+        if (url != null) {
+            if (HttpUtils.isNetworkAvailable(mActivity)) {
+                getDataFormServer(url);
+            } else {
+                getCache(url);
+            }
         }
-
         initData();
     }
 

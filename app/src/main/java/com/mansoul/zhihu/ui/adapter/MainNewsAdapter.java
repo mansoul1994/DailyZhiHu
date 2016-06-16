@@ -85,7 +85,6 @@ public class MainNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             //设置图片
             HttpUtils.setImage(imgUrl, normalHolder.imageView);
-//        setImg(imgUrl, normalHolder.imageView);
         }
 
 
@@ -132,14 +131,6 @@ public class MainNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
-    }
-
-
-    public void setImg(String imgUrl, ImageView imageView) {
-        ImageLoader imageLoader = MyApplication.getImageLoader();
-        ImageLoader.ImageListener listener = ImageLoader.getImageListener(
-                imageView, R.mipmap.moren, R.mipmap.moren);
-        imageLoader.get(imgUrl, listener);
     }
 
     //1.定义接口

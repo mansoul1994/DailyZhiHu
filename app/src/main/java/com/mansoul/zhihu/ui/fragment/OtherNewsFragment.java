@@ -164,10 +164,12 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
     private void initHeader(NewsTheme newsTheme) {
         mTitle.setText(newsTheme.getDescription());
 
-        ImageLoader imageLoader = MyApplication.getImageLoader();
-        ImageLoader.ImageListener listener = ImageLoader.getImageListener(
-                mTopImg, R.mipmap.moren, R.mipmap.moren);
-        imageLoader.get(newsTheme.getBackground(), listener);
+        HttpUtils.setImage(newsTheme.getBackground(), mTopImg);
+
+//        ImageLoader imageLoader = MyApplication.getImageLoader();
+//        ImageLoader.ImageListener listener = ImageLoader.getImageListener(
+//                mTopImg, R.mipmap.moren, R.mipmap.moren);
+//        imageLoader.get(newsTheme.getBackground(), listener);
     }
 
 

@@ -338,10 +338,10 @@ public class MainNewsFragment extends BaseFragment {
         return LAST_NEWS;
     }
 
-    public void getMoreCache(String lastNews) {
+    public void getMoreCache(String url) {
         mSwipeRefresh.setRefreshing(false);
         System.out.println("加载缓存了！！！");
-        String cache = HttpCacheManager.getCache(lastNews);
+        String cache = HttpCacheManager.getCache(url);
         isLoadMore = false;
 
         if (!StringUtils.isEmpty(cache)) {
