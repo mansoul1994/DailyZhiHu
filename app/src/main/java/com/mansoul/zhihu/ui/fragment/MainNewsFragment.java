@@ -20,7 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.mansoul.zhihu.R;
-import com.mansoul.zhihu.cache.HttpCacheManager;
+import com.mansoul.zhihu.engine.HttpCacheManager;
 import com.mansoul.zhihu.domain.NewsLast;
 import com.mansoul.zhihu.global.MyApplication;
 import com.mansoul.zhihu.global.NewsApi.Api;
@@ -202,6 +202,8 @@ public class MainNewsFragment extends BaseFragment {
                 //将被点击的item标记已读
                 TextView title = (TextView) view.findViewById(R.id.tv_main_news);
                 title.setTextColor(Color.GRAY);
+
+                System.out.println(data);
 
                 Intent intent = new Intent(mActivity, NewsContentActivity.class);
                 intent.putExtra("newsId", data);

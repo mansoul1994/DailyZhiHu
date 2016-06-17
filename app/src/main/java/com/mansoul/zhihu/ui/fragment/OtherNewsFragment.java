@@ -3,8 +3,6 @@ package com.mansoul.zhihu.ui.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,16 +10,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.mansoul.zhihu.R;
-import com.mansoul.zhihu.cache.HttpCacheManager;
+import com.mansoul.zhihu.engine.HttpCacheManager;
 import com.mansoul.zhihu.domain.NewsTheme;
-import com.mansoul.zhihu.global.MyApplication;
 import com.mansoul.zhihu.global.NewsApi.Api;
 import com.mansoul.zhihu.ui.activity.MainActivity;
 import com.mansoul.zhihu.ui.activity.NewsContentActivity;
@@ -30,7 +22,6 @@ import com.mansoul.zhihu.utils.HttpUtils;
 import com.mansoul.zhihu.utils.PrefUtils;
 import com.mansoul.zhihu.utils.StringUtils;
 
-import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;

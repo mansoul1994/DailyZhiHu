@@ -104,6 +104,7 @@ public class NewsLast {
         public void setImages(List<String> images) {
             this.images = images;
         }
+
     }
 
     public static class TopStoriesBean {

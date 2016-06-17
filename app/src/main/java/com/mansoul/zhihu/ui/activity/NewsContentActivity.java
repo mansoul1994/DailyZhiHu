@@ -1,10 +1,11 @@
 package com.mansoul.zhihu.ui.activity;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,12 +21,13 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.mansoul.zhihu.R;
 import com.mansoul.zhihu.domain.NewsContent;
+import com.mansoul.zhihu.engine.DBHelper;
 import com.mansoul.zhihu.global.MyApplication;
 import com.mansoul.zhihu.global.NewsApi.Api;
 import com.mansoul.zhihu.utils.HttpUtils;
-import com.mansoul.zhihu.utils.LogUtils;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.mansoul.zhihu.utils.PrefUtils;
+import com.mansoul.zhihu.utils.ToastUtil;
+import com.orhanobut.logger.Logger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,7 +37,7 @@ import cn.sharesdk.onekeyshare.OnekeyShare;
 public class NewsContentActivity extends AppCompatActivity {
 
     @BindView(R.id.image_view)
-    ImageView mImage;
+    ImageView mImageView;
     @BindView(R.id.web_view)
     WebView mWebView;
     @BindView(R.id.tv_place)
@@ -48,6 +50,8 @@ public class NewsContentActivity extends AppCompatActivity {
     CollapsingToolbarLayout mCollapsingToolbarLayout;
 
     private String title;
+    private int id;
+    private String image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +104,7 @@ public class NewsContentActivity extends AppCompatActivity {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
+                            Logger.json(response);
                             parseJson(response);
                         }
                     },
@@ -118,25 +123,31 @@ public class NewsContentActivity extends AppCompatActivity {
         }
     }
 
+    private void savaData() {
+
+    }
+
     private void parseJson(String response) {
         Gson gson = new Gson();
         NewsContent newsContent = gson.fromJson(response, NewsContent.class);
 
         title = newsContent.getTitle();
+        id = newsContent.getId();
+        if (newsContent.getImages() != null) {
+            image = newsContent.getImages().get(0);
+        }
+
 
         mTvTitle.setText(title);
         mTvPlace.setText(newsContent.getImage_source());
 
         String imgUrl = newsContent.getImage();
 
-        //显示图片
-//        ImageLoader imageLoader = ImageLoader.getInstance();
-//        DisplayImageOptions options = new DisplayImageOptions.Builder()
-//                .cacheInMemory(true)
-//                .cacheOnDisk(true)
-//                .build();
-//        imageLoader.displayImage(newsContent.getImage(), mImage, options);
-        HttpUtils.setImage(imgUrl, mImage);
+        if (imgUrl != null) {
+            HttpUtils.setImage(imgUrl, mImageView);
+        } else if (image != null) {
+            HttpUtils.setImage(image, mImageView);
+        }
 
         //加载网页内容
         String css = "<link rel=\"stylesheet\" href=\"file:///android_asset/css/news.css\" type=\"text/css\">";
@@ -165,8 +176,42 @@ public class NewsContentActivity extends AppCompatActivity {
             showShare();
             return true;
         }
+        if (id == R.id.action_fav) {
+            //是否收藏来进行收藏操作
+            //标记已收藏
+            String favIds = PrefUtils.getString(this, "favIds", "");
+
+            String ids = id + "";
+            if (!favIds.contains(ids)) {
+                //收藏
+                favIds = favIds + ids + ",";
+                PrefUtils.setString(this, "favIds", favIds);
+                favoriteNews();
+            } else {
+                //取消收藏
+
+            }
+
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    //收藏新闻
+    private void favoriteNews() {
+        DBHelper dbHelper = new DBHelper(this, "fav_news");
+        //得到可写的数据库
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        //添加到数据库
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("title", title);
+        values.put("image", image);
+        db.insert("fav_table", null, values);
+
+        db.close();
     }
 
 

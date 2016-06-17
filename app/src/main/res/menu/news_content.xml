@@ -7,9 +7,17 @@
         <!--android:title="@string/action_settings"-->
         <!--app:showAsAction="never" />-->
     <item
+        android:id="@+id/action_fav"
+        android:icon="@drawable/ic_star_white_24dp"
+        android:title="@string/fav"
+        app:showAsAction="ifRoom">
+
+    </item>
+    <item
         android:id="@+id/action_share"
         android:icon="@drawable/icon_share"
-        android:title="分享"
+        android:title="@string/share"
         app:showAsAction="ifRoom" />
+
 
 </menu>

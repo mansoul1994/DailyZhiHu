@@ -1,4 +1,4 @@
-package com.mansoul.zhihu.cache;
+package com.mansoul.zhihu.engine;
 
 import android.graphics.Bitmap;
 import android.util.LruCache;

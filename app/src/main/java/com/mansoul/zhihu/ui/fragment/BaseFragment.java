@@ -12,13 +12,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.mansoul.zhihu.cache.HttpCacheManager;
+import com.mansoul.zhihu.engine.HttpCacheManager;
 import com.mansoul.zhihu.global.MyApplication;
 import com.mansoul.zhihu.utils.HttpUtils;
-import com.mansoul.zhihu.utils.LogUtils;
 import com.mansoul.zhihu.utils.MD5Encoder;
 import com.mansoul.zhihu.utils.StringUtils;
-import com.orhanobut.logger.Logger;
 
 import java.io.File;
 
