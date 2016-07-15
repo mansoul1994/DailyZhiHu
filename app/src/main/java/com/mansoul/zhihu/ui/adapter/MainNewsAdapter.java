@@ -77,15 +77,15 @@ public class MainNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         String imgUrl = mStories.get(position).getImages().get(0);
 
-        String tag = (String) img.getTag();
+//        String tag = (String) img.getTag();
 
-        if (!imgUrl.equals(tag)) {
+//        if (!imgUrl.equals(tag)) {
 
-            img.setTag(imgUrl);
+//            img.setTag(imgUrl);
 
             //设置图片
-            HttpUtils.setImage(imgUrl, normalHolder.imageView);
-        }
+            HttpUtils.setImage(mContext,imgUrl, normalHolder.imageView);
+//        }
 
 
     }

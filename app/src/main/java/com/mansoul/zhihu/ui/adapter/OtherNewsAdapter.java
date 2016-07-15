@@ -75,7 +75,7 @@ public class OtherNewsAdapter extends RecyclerView.Adapter<OtherNewsAdapter.Norm
             String imgUrl = mStories.get(position).getImages().get(0);
 
             //显示图片
-            HttpUtils.setImage(imgUrl, holder.imageView);
+            HttpUtils.setImage(mContext, imgUrl, holder.imageView);
 
 //            setImg(imgUrl, holder.imageView);
         } else {

@@ -10,6 +10,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.bumptech.glide.Glide;
 import com.mansoul.zhihu.global.MyApplication;
 import com.mansoul.zhihu.global.NewsApi.Api;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -54,6 +55,15 @@ public class HttpUtils {
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
         imageLoader.displayImage(url, imageView, options);
+    }
+
+    public static void setImage(Context context, String url, ImageView imageView) {
+        //显示图片
+        Glide
+                .with(context)
+                .load(url)
+                .centerCrop()
+                .into(imageView);
     }
 
 

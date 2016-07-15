@@ -40,6 +40,7 @@ public class MainNewsScrollView extends ScrollView {
                 if (Math.abs(moveY - downY) > mTouchSlop) {
                     return true;
                 }
+                break;
         }
         return super.onInterceptTouchEvent(e);
     }

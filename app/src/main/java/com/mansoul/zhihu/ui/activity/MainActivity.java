@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public interface FragmentBackListener {
-
         void onBackForward();
     }
 

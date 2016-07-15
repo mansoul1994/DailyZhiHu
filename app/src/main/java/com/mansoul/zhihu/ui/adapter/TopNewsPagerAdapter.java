@@ -49,13 +49,14 @@ public class TopNewsPagerAdapter extends PagerAdapter {
         ImageView view = new ImageView(mActivity);
         view.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        String tag = (String) view.getTag();
-
-        if (!imgUrl.equals(tag)) {
-            view.setTag(imgUrl);
-            //设置图片
-            HttpUtils.setImage(imgUrl, view);
-        }
+//        String tag = (String) view.getTag();
+//
+//        if (!imgUrl.equals(tag)) {
+//            view.setTag(imgUrl);
+//            //设置图片
+//            HttpUtils.setImage(imgUrl, view);
+//        }
+        HttpUtils.setImage(mActivity, imgUrl, view);
 
         final int finalPosition = position;
         view.setOnClickListener(new View.OnClickListener() {

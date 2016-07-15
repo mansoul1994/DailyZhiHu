@@ -140,7 +140,7 @@ public class SplashActivity extends AppCompatActivity {
         mTextView.setText(text);
 
         //显示图片
-        HttpUtils.setImage(imgUrl, mImageView);
+        HttpUtils.setImage(this, imgUrl, mImageView);
 //        ImageLoader imageLoader = MyApplication.getImageLoader();
 //        ImageLoader.ImageListener listener = ImageLoader.getImageListener(
 //                mImageView, R.mipmap.moren, R.mipmap.moren);

@@ -1,6 +1,7 @@
 package com.mansoul.zhihu.ui.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -155,7 +156,7 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
     private void initHeader(NewsTheme newsTheme) {
         mTitle.setText(newsTheme.getDescription());
 
-        HttpUtils.setImage(newsTheme.getBackground(), mTopImg);
+        HttpUtils.setImage(mActivity, newsTheme.getBackground(), mTopImg);
 
 //        ImageLoader imageLoader = MyApplication.getImageLoader();
 //        ImageLoader.ImageListener listener = ImageLoader.getImageListener(
@@ -173,6 +174,7 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
             ((MainActivity) activity).setInterception(true);
         }
     }
+
 
     @Override
     public void onDetach() {
