@@ -2,6 +2,7 @@ package com.mansoul.zhihu.global;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -24,6 +25,11 @@ public class MyApplication extends Application {
     private static RequestQueue mQueue;
     private static Context mContext;
     private static com.android.volley.toolbox.ImageLoader mImageLoader;
+    private static Handler handler;
+
+    public static Handler getHandler() {
+        return handler;
+    }
 
     @Override
     public void onCreate() {
@@ -32,6 +38,8 @@ public class MyApplication extends Application {
         initImageLoader(getApplicationContext());
 
         mContext = getApplicationContext();
+
+        handler = new Handler();
 
     }
 

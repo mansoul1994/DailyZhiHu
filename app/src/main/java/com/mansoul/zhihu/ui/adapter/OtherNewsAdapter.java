@@ -109,13 +109,6 @@ public class OtherNewsAdapter extends RecyclerView.Adapter<OtherNewsAdapter.Norm
         }
     }
 
-    public void setImg(String imgUrl, ImageView imageView) {
-        ImageLoader imageLoader = MyApplication.getImageLoader();
-        ImageLoader.ImageListener listener = ImageLoader.getImageListener(
-                imageView, R.mipmap.moren, R.mipmap.moren);
-        imageLoader.get(imgUrl, listener);
-    }
-
     //1.定义接口
     public interface OnRecyclerViewItemClickListener {
         void onItemClick(View view, String data);

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,8 +73,10 @@ public abstract class BaseFragment extends Fragment {
     public void getDataFormServer(final String url) {
         if (!isLoading) {
             isLoading = true;
-//            mSwipeRefresh.setRefreshing(true);
-            setStateTrue();
+            if (getSwipeRefreshLayout() != null) {
+                getSwipeRefreshLayout().setRefreshing(true);
+            }
+//            setStateTrue();
 
             StringRequest request = new StringRequest(Request.Method.GET, url,
                     new Response.Listener<String>() {
@@ -96,7 +99,10 @@ public abstract class BaseFragment extends Fragment {
                             //解析json数据
                             parseData(response);
 
-                            setStateFalse();
+//                            setStateFalse();
+                            if (getSwipeRefreshLayout() != null) {
+                                getSwipeRefreshLayout().setRefreshing(false);
+                            }
                             isLoading = false;
                         }
                     },
@@ -114,14 +120,19 @@ public abstract class BaseFragment extends Fragment {
 
     public abstract void parseData(String response);
 
-    public abstract void setStateFalse();
+//    public abstract void setStateFalse();
+//
+//    public abstract void setStateTrue();
 
-    public abstract void setStateTrue();
+    public abstract SwipeRefreshLayout getSwipeRefreshLayout();
 
     public void getCache(String url) {
-        setStateFalse();
-//        mSwipeRefresh.setRefreshing(false);
-        System.out.println("加载缓存了！！！");
+        if (getSwipeRefreshLayout() != null) {
+
+            getSwipeRefreshLayout().setRefreshing(false);
+        }
+//        setStateFalse();
+//        System.out.println("加载缓存了！！！");
         String cache = HttpCacheManager.getCache(url);
 
         if (!StringUtils.isEmpty(cache)) {

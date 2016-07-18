@@ -67,6 +67,7 @@ public class MainNewsFragment extends BaseFragment {
     private Handler handler;
     private List<NewsLast.StoriesBean> mStories;
     private MainNewsAdapter mAdapter;
+    private Task task;
 
     @Override
     public View initView() {
@@ -82,9 +83,15 @@ public class MainNewsFragment extends BaseFragment {
         LinearLayoutManager llm = new LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
 
-        handler = new Handler();
-
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        handler = UIUtils.getHandler();
+        task = new Task();
+        task.start();
     }
 
     @Override
@@ -215,24 +222,21 @@ public class MainNewsFragment extends BaseFragment {
     }
 
     @Override
-    public void setStateFalse() {
-        mSwipeRefresh.setRefreshing(false);
-    }
-
-    @Override
-    public void setStateTrue() {
-        mSwipeRefresh.setRefreshing(true);
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return mSwipeRefresh;
     }
 
     //轮播图控制
     private boolean isLoop = true;
 
     private void initHeader(final List<NewsLast.TopStoriesBean> top_stories) {
+        System.out.println("头布局初始化了。。。。");
         TopNewsPagerAdapter adapter = new TopNewsPagerAdapter(top_stories, mActivity);
         mViewPager.setAdapter(adapter);
 
         mViewPager.setCurrentItem(top_stories.size() * 100000);
         mTopNewsTitle.setText(top_stories.get(0).getTitle());
+        prePosition = 0;
 
         //动态添加指示器(小点)
         mContainer.removeAllViews();
@@ -260,11 +264,9 @@ public class MainNewsFragment extends BaseFragment {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_MOVE:
-//                        LogUtils.i("停止轮播");
                         isLoop = false;
                         break;
                     case MotionEvent.ACTION_UP:
-                        LogUtils.i("开始轮播");
                         isLoop = true;
                         break;
                 }
@@ -273,7 +275,6 @@ public class MainNewsFragment extends BaseFragment {
         });
 
         //开启自动轮播
-        Task task = new Task();
         task.start();
 
         initViewPager(top_stories);
@@ -283,16 +284,17 @@ public class MainNewsFragment extends BaseFragment {
 
     //轮播图,初始化指示器
     private void initViewPager(final List<NewsLast.TopStoriesBean> top_stories) {
-
-
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
             @Override
             public void onPageSelected(int position) {
                 position = position % top_stories.size();
+
+                System.out.println("第" + position + "个选中了");
 
                 mTopNewsTitle.setText(top_stories.get(position).getTitle());
 
@@ -304,7 +306,6 @@ public class MainNewsFragment extends BaseFragment {
                 preView.setImageResource(R.drawable.indicator_normal);
 
                 prePosition = position;
-
             }
 
             @Override
@@ -312,6 +313,37 @@ public class MainNewsFragment extends BaseFragment {
 
             }
         });
+
+//        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//                position = position % top_stories.size();
+//
+//                System.out.println("第" + position + "个选中了");
+//
+//                mTopNewsTitle.setText(top_stories.get(position).getTitle());
+//
+//                ImageView imageView = (ImageView) mContainer.getChildAt(position);
+//                imageView.setImageResource(R.drawable.indicator_selected);
+//
+//                //前一个设置为为选中
+//                ImageView preView = (ImageView) mContainer.getChildAt(prePosition);
+//                preView.setImageResource(R.drawable.indicator_normal);
+//
+//                prePosition = position;
+//
+//
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//
+//            }
+//        });
     }
 
     //轮播任务
@@ -342,7 +374,7 @@ public class MainNewsFragment extends BaseFragment {
 
     public void getMoreCache(String url) {
         mSwipeRefresh.setRefreshing(false);
-        System.out.println("加载缓存了！！！");
+//        System.out.println("加载缓存了！！！");
         String cache = HttpCacheManager.getCache(url);
         isLoadMore = false;
 
@@ -352,9 +384,15 @@ public class MainNewsFragment extends BaseFragment {
     }
 
     @Override
+    public void onPause() {
+        handler = null;
+        super.onPause();
+
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        handler = null;
         MyApplication.getRequestQueue().cancelAll("beforeNews");
     }
 }

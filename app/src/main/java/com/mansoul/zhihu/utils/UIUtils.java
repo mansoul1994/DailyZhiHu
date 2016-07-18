@@ -3,6 +3,7 @@ package com.mansoul.zhihu.utils;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.view.View;
 
 import com.mansoul.zhihu.global.MyApplication;
@@ -16,9 +17,9 @@ public class UIUtils {
         return MyApplication.getContext();
     }
 
-//    public static Handler getHandler() {
-//        return MyApplication.getHandler();
-//    }
+    public static Handler getHandler() {
+        return MyApplication.getHandler();
+    }
 //
 //    public static int getMainThreadId() {
 //        return MyApplication.getMainThreadId();

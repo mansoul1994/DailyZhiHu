@@ -95,7 +95,7 @@ public class SplashActivity extends AppCompatActivity {
         boolean isNetworkAvailable = HttpUtils.isNetworkAvailable(this);
 
         if (isNetworkAvailable) {
-            System.out.println("网络可用");
+//            System.out.println("网络可用");
             //从网上更新图片
             getDataFormServer(START_IMG);
 

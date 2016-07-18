@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -85,7 +86,7 @@ public class FavoriteFragment extends BaseFragment implements MainActivity.Fragm
             String title = cursor.getString(cursor.getColumnIndex("title"));
             String image = cursor.getString(cursor.getColumnIndex("image"));
 
-            Logger.i(id + "," + title + "," + image);
+//            Logger.i(id + "," + title + "," + image);
 
             List<String> images = new ArrayList<>();
             images.add(image);
@@ -162,13 +163,8 @@ public class FavoriteFragment extends BaseFragment implements MainActivity.Fragm
     }
 
     @Override
-    public void setStateFalse() {
-
-    }
-
-    @Override
-    public void setStateTrue() {
-
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return null;
     }
 
     @Override

@@ -93,7 +93,7 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
 
     public void getCache(String lastNews) {
         mSwipeRefresh.setRefreshing(false);
-        System.out.println("加载缓存了！！！");
+//        System.out.println("加载缓存了！！！");
         String cache = HttpCacheManager.getCache(lastNews);
 
         if (!StringUtils.isEmpty(cache)) {
@@ -142,15 +142,9 @@ public class OtherNewsFragment extends BaseFragment implements MainActivity.Frag
 
     }
 
-
     @Override
-    public void setStateFalse() {
-        mSwipeRefresh.setRefreshing(false);
-    }
-
-    @Override
-    public void setStateTrue() {
-        mSwipeRefresh.setRefreshing(true);
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return mSwipeRefresh;
     }
 
     private void initHeader(NewsTheme newsTheme) {

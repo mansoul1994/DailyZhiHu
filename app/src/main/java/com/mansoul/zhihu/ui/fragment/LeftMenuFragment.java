@@ -2,6 +2,7 @@ package com.mansoul.zhihu.ui.fragment;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -71,6 +72,11 @@ public class LeftMenuFragment extends BaseFragment {
         }
     }
 
+    @Override
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return null;
+    }
+
     private void initListView(final List<NewsItem.OthersBean> item) {
 
         mAdapter = new NewsItemAdapter(item, mActivity);
@@ -130,13 +136,4 @@ public class LeftMenuFragment extends BaseFragment {
         return NEWS_ITEM_URL;
     }
 
-    @Override
-    public void setStateFalse() {
-
-    }
-
-    @Override
-    public void setStateTrue() {
-
-    }
 }
